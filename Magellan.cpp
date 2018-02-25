@@ -80,44 +80,7 @@ Magellan::Magellan()
 {
   Event_debug =  event_null;
 }
-/*-------------------------------
-    Check NB Network signal
-    Author: Device innovation Team
-  -------------------------------
-*/
-signal Magellan:: getSignal()
-{
-  _Serial->println(F("AT+CSQ"));
-  AIS_NB_BC95_RES res = wait_rx_bc(500,F("+CSQ"));
-  signal sig;
-  int x = 0;
-  String tmp;
-  if(res.status)
-  {
-    if(res.data.indexOf(F("+CSQ"))!=-1)
-    {
-      int index = res.data.indexOf(F(":"));
-      int index2 = res.data.indexOf(F(","));
-      tmp = res.data.substring(index+1,index2);
-      if (tmp == F("99"))
-      {
-        sig.csq = F("N/A");
-        sig.rssi = F("N/A");
-      }
-      else
-      {
-        sig.csq = tmp;
-        x = tmp.toInt();
-        x = (2*x)-113;
-        sig.rssi = String(x);
-      }
-      sig.ber  = res.data.substring(index2+1);
-      if (debug) Serial.println("# Get CSQ Signal: csq= " + sig.csq + ", rssi= " + sig.rssi + ", ber= " +sig.ber);
-    }
-  }
-  res = wait_rx_bc(500,F("OK"));
-  return(sig);
-}
+
 
 
 /*-------------------------------
@@ -924,5 +887,42 @@ void Magellan:: waitResponse()
         }
 }
 
-
+/*-------------------------------
+    Check NB Network signal
+    Author: Device innovation Team
+  -------------------------------
+*/
+signal Magellan:: getSignal()
+{
+  _Serial->println(F("AT+CSQ"));
+  AIS_BC95_RES res = wait_rx_bc(500,F("+CSQ"));
+  signal sig;
+  int x = 0;
+  String tmp;
+  if(res.status)
+  {
+    if(res.data.indexOf(F("+CSQ"))!=-1)
+    {
+      int index = res.data.indexOf(F(":"));
+      int index2 = res.data.indexOf(F(","));
+      tmp = res.data.substring(index+1,index2);
+      if (tmp == F("99"))
+      {
+        sig.csq = F("N/A");
+        sig.rssi = F("N/A");
+      }
+      else
+      {
+        sig.csq = tmp;
+        x = tmp.toInt();
+        x = (2*x)-113;
+        sig.rssi = String(x);
+      }
+      sig.ber  = res.data.substring(index2+1);
+      if (debug) Serial.println("# Get CSQ Signal: csq= " + sig.csq + ", rssi= " + sig.rssi + ", ber= " +sig.ber);
+    }
+  }
+  res = wait_rx_bc(500,F("OK"));
+  return(sig);
+}
 

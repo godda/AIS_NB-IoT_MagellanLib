@@ -34,6 +34,7 @@ struct AIS_BC95_RES
 	String temp;
 };
 
+
 struct signal
 {
 	String csq;
